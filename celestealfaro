@@ -1,0 +1,96 @@
+class WordSearch {
+    constructor(grid) {
+        this.grid = grid;
+    }
+
+    search(words) {
+        const results = {};
+
+        for (const word of words) {
+            results[word] = this.findWord(word);
+        }
+
+        return results;
+    }
+
+    findWord(word) {
+        const directions = [
+            { row: 0, col: 1 },   // derecha
+            { row: 0, col: -1 },  // izquierda
+            { row: 1, col: 0 },   // abajo
+            { row: -1, col: 0 },  // arriba
+            { row: 1, col: 1 },   // diagonal abajo derecha
+            { row: 1, col: -1 },  // diagonal abajo izquierda
+            { row: -1, col: 1 },  // diagonal arriba derecha
+            { row: -1, col: -1 }   // diagonal arriba izquierda
+        ];
+
+        const numRows = this.grid.length;
+        const numCols = this.grid[0].length;
+
+        for (let r = 0; r < numRows; r++) {
+            for (let c = 0; c < numCols; c++) {
+                for (const dir of directions) {
+                    const result = this.checkDirection(word, r, c, dir);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+        }
+
+        return null; // Si no se encuentra la palabra
+    }
+
+    checkDirection(word, startRow, startCol, direction) {
+        let row = startRow;
+        let col = startCol;
+        const length = word.length;
+
+        for (let i = 0; i < length; i++) {
+            if (
+                row < 0 || row >= this.grid.length ||
+                col < 0 || col >= this.grid[0].length ||
+                this.grid[row][col] !== word[i]
+            ) {
+                return null; // Palabra no encontrada en esta dirección
+            }
+            row += direction.row;
+            col += direction.col;
+        }
+
+        // Si se encuentra la palabra, devolver las coordenadas (1-indexed)
+        return {
+            start: { row: startRow + 1, col: startCol + 1 },
+            end: { row: row + 1, col: col + 1 }
+        };
+    }
+}
+
+// Ejemplo de uso
+const grid = [
+    ['t', 'h', 'i', 's'],
+    ['a', 'b', 'c', 'd'],
+    ['e', 'f', 'g', 'h'],
+    ['i', 'j', 'k', 'l']
+];
+
+const wordSearch = new WordSearch(grid);
+const words = ['this', 'abc', 'hgf', 'l', 'xyz'];
+
+const result = wordSearch.search(words);
+console.log(result);
+
+/* Ejecución de pruebas */
+const runTests = () => {
+    const testGrid = [
+        ['t', 'h', 'i', 's'],
+        ['a', 'b', 'c', 'd'],
+        ['e', 'f', 'g', 'h'],
+        ['i', 'j', 'k', 'l']
+    ];
+
+    const ws = new WordSearch(testGrid);
+    const testWords = ['this', 'abcd', 'hgf', 'l', 'xyz'];
+    const expectedResults = {
+        'this': { start: { row: 1, col
